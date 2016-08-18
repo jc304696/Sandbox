@@ -12,3 +12,39 @@ __author__ = "Lyle Martin"
                      new items or changes to the status.
 """
 
+import csv
+from operator import itemgetter
+
+ItemFile = open("items.csv","r")
+reader = csv.reader(ItemFile)
+
+Items = []
+for line in reader:
+    Items.append(line)
+
+Items.sort(key=itemgetter(2))
+
+
+print(Items)
+print("{0:25s}{1:>2s}{2:>8.2f} ({3})".format(Items[0][0],'$',float(Items[0][1]),Items[0][2]))
+print("{0:25s}{1:>2s}{2:>8.2f} ({3})".format(Items[1][0],'$',float(Items[1][1]),Items[1][2]))
+print("{0:25s}{1:>2s}{2:>8.2f} ({3})".format(Items[2][0],'$',float(Items[2][1]),Items[2][2]))
+
+"""ItemName = []
+ItemPrice = []
+ItemPriority = []
+ItemStatus = []
+
+for line in Items:
+    ItemName.append(line[0])
+    ItemPrice.append(float(line[1]))
+    ItemPriority.append(int(line[2]))
+    ItemStatus.append(line[3])
+
+print(ItemName)
+print(ItemPrice)
+print(ItemPriority)
+print(ItemStatus)"""
+
+ItemFile.close()
+
