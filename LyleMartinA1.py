@@ -18,7 +18,6 @@ from operator import itemgetter
 def PrintRawFileData():
     InFile = open("items.csv","r")
     print(InFile.read())
-    print('\n\n')
     InFile.close()
 PrintRawFileData()
 
@@ -52,7 +51,9 @@ def main():
             choice = input('>>> ').upper()
 
         elif choice == "A":
-            print('\n')
+            AddItem()
+            print(menu)
+            choice = input('>>> ').upper()
 
         elif choice == "M":
             MarkComplete(Items)
@@ -63,12 +64,11 @@ def main():
             print("Invalid menu choice\n")
             print(menu)
             choice = input('>>> ').upper()
-
+    #UpdateFile(Items,NumberOfItems)
     print('Have a nice day :)')
 
-
 def StoreFileData():
-    global ItemFile, Items, NumberOfItems
+    global Items, NumberOfItems
     ItemFile = open("items.csv", "r")
     reader = csv.reader(ItemFile)
     Items = []
@@ -130,25 +130,23 @@ def CheckStatus(Items,NumberOfItems):
         ItemNumber += 1
     return completed, required
 
-def AddItem(Items)
+def AddItem():
+    global Items, NumberOfItems
+    name = str(input('Item name: '))
+    price = str(input('Price: $ '))
+    priority = str(input('Priority: '))
+    NewItem = [name,price,priority,'r']
+    Items.append(NewItem)
+    Items.sort(key=itemgetter(2))
+    NumberOfItems = len(Items)
+    print('\n')
+    return Items, NumberOfItems
+
+def UpdateFile(Items,NumberOfItems):
+    OutFile = open('newitems.csv','w')
+    for UpdatedItem in Items:
+        OutFile.write(UpdatedItem)
+    OutFile.close()
+    print('{} items saved to items.csv'.format(NumberOfItems))
 
 main()
-
-"""ItemName = []
-ItemPrice = []
-ItemPriority = []
-ItemStatus = []
-
-for line in Items:
-    ItemName.append(line[0])
-    ItemPrice.append(float(line[1]))
-    ItemPriority.append(int(line[2]))
-    ItemStatus.append(line[3])
-
-print(ItemName)
-print(ItemPrice)
-print(ItemPriority)
-print(ItemStatus)"""
-
-
-
