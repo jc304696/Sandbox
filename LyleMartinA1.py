@@ -64,7 +64,7 @@ def main():
             print("Invalid menu choice\n")
             print(menu)
             choice = input('>>> ').upper()
-    #UpdateFile(Items,NumberOfItems)
+    UpdateFile(Items,NumberOfItems)
     print('Have a nice day :)')
 
 def StoreFileData():
@@ -143,9 +143,10 @@ def AddItem():
     return Items, NumberOfItems
 
 def UpdateFile(Items,NumberOfItems):
+
     OutFile = open('newitems.csv','w')
-    for UpdatedItem in Items:
-        OutFile.write(UpdatedItem)
+    writer = csv.writer(OutFile,lineterminator='\n')
+    writer.writerows(Items)
     OutFile.close()
     print('{} items saved to items.csv'.format(NumberOfItems))
 
