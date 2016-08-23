@@ -16,63 +16,6 @@ import csv
 from operator import itemgetter
 import Functions
 
-
-InFile = open("items.csv", "r")
-print(InFile.read())
-InFile.close()
-
-def main():
-    ItemList = StoreFileData()
-    print('Shopping List 1.0 - by Lyle Martin')
-    print("{} items loaded from items.csv".format(len(ItemList)))
-
-    menu = "Menu:\nR - List required items\nC - List completed items\nA - Add new item\nM - Mark item as completed\nQ - Quit"
-    print(menu)
-    choice = input(">>> ").upper()
-    while choice != 'Q':
-        if choice == "R":
-            reqList = CreateList(ItemList, 'r')
-            if len(reqList) == 0:
-                print('No required items')
-            else:
-                PrintList(reqList)
-
-            print(menu)
-            choice = input('>>> ').upper()
-
-        elif choice == "C":
-            comList = CreateList(ItemList, 'c')
-            if len(comList) == 0:
-                print('No completed items')
-            else:
-                PrintList(comList)
-
-            print(menu)
-            choice = input('>>> ').upper()
-
-        elif choice == "A":
-            ItemList = AddItem(ItemList)
-
-            print(menu)
-            choice = input('>>> ').upper()
-
-        elif choice == "M":
-            reqList = CreateList(ItemList, 'r')
-            if len(reqList) == 0:
-                print('No required items\n')
-            else:
-                ItemList = MarkComplete(ItemList, reqList)
-
-            print(menu)
-            choice = input('>>> ').upper()
-
-        else:
-            print("Invalid menu choice\n")
-            print(menu)
-            choice = input('>>> ').upper()
-    UpdateFile(ItemList)
-    print('Have a nice day :)')
-
 def StoreFileData():
     """Import file and save to a list.
 
@@ -88,6 +31,61 @@ def StoreFileData():
     ItemFile.close()
     return Items
 
+InFile = open("items.csv", "r")
+print(InFile.read())
+InFile.close()
+ITEMLIST = StoreFileData()
+
+def main():
+
+    print('Shopping List 1.0 - by Lyle Martin')
+    print("{} items loaded from items.csv".format(len(ITEMLIST)))
+
+    options = {'R' : caseR, 'C' : caseC, 'A' : AddItem, 'M' : caseM}
+    choice = PrintMenu()
+
+    while choice != 'Q':
+
+        try: options[choice]()
+        except KeyError:
+            print("Invalid menu choice\n")
+
+        choice = PrintMenu()
+
+    UpdateFile(ITEMLIST)
+    print('Have a nice day :)')
+
+def caseR():
+    reqList = CreateList(ITEMLIST, 'r')
+    if len(reqList) == 0:
+        print('No required items')
+    else:
+        PrintList(reqList)
+
+def caseC():
+    comList = CreateList(ITEMLIST, 'c')
+    if len(comList) == 0:
+        print('No completed items')
+    else:
+        PrintList(comList)
+
+def caseM():
+    reqList = CreateList(ITEMLIST, 'r')
+    if len(reqList) == 0:
+        print('No required items\n')
+    else:
+        MarkComplete(ITEMLIST, reqList)
+
+
+def PrintMenu():
+    """
+
+    :return:
+    """
+    print("Menu:\nR - List required items\nC - List completed items\nA - Add new item\nM - Mark item as completed\nQ - Quit")
+    choice = input(">>> ").upper()
+    return choice
+
 def CreateList(mainList, searchValue):
     """Print a required list on the screen
 
@@ -102,7 +100,7 @@ def CreateList(mainList, searchValue):
     inFile.close()
     return reqItems
 
-def AddItem(workingList):
+def AddItem():
     """Adding a list to a list
 
     """
@@ -140,12 +138,16 @@ def AddItem(workingList):
             print('Invalid input; enter a valid number')
 
     NewItem = [name, str(price), str(priority), 'r']
-    workingList.append(NewItem)
-    workingList.sort(key=itemgetter(2))
+    ITEMLIST.append(NewItem)
+    ITEMLIST.sort(key=itemgetter(2))
     print('{}, ${:.2f} (priority {}) added to shopping list\n'.format(name, float(price), priority))
-    return workingList
 
 def UpdateFile(workingList):
+    """
+    :param workingList:
+    :return:
+    """
+
     OutFile = open('newitems.csv', 'w')
     writer = csv.writer(OutFile, lineterminator='\n')
     writer.writerows(workingList)

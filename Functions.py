@@ -1,6 +1,7 @@
 import csv
 from operator import itemgetter
 
+
 def StoreFileData():
     """Import file and save to a list.
 
@@ -16,34 +17,19 @@ def StoreFileData():
     ItemFile.close()
     return Items
 
-def CreateList(searchValue):
+def CreateList(mainList, searchValue):
     """Print a required list on the screen
 
     """
     inFile = open("items.csv", "r")
     reader = csv.reader(inFile)
     reqItems = []
-    for line in reader:
-        if searchValue in line:
-            reqItems.append(line)
+    for line in range(0, len(mainList)):
+        if searchValue == mainList[line][3]:
+            reqItems.append(mainList[line])
     reqItems.sort(key=itemgetter(2))
     inFile.close()
     return reqItems
-
-    """     print("{0:d}. {1:25s} ${2:>8.2f} ({3})".format(reader[0],reader[1],reader[2]))
-    ItemNumber = 0
-    TotalCost = 0
-    NumberOfPrints = 0
-    while ItemNumber < len(list):
-        if list[ItemNumber][3] == "r":
-            TotalCost += float(list[ItemNumber][1])
-            print(
-                "{0:d}. {1:25s} ${2:>8.2f} ({3})".format(ItemNumber, list[ItemNumber][0], float(list[ItemNumber][1]),
-                                                         list[ItemNumber][2]))
-            NumberOfPrints += 1
-        ItemNumber += 1
-
-    print('Total expected price for {0} items: ${1:.2f}\n'.format(NumberOfPrints, TotalCost))"""
 
 def AddItem(workingList):
     """Adding a list to a list
@@ -89,8 +75,48 @@ def AddItem(workingList):
     return workingList
 
 def UpdateFile(workingList):
+    """
+    :param workingList:
+    :return:
+    """
+
     OutFile = open('newitems.csv', 'w')
     writer = csv.writer(OutFile, lineterminator='\n')
     writer.writerows(workingList)
     OutFile.close()
     print('{} items saved to items.csv'.format(len(workingList)))
+
+def PrintList(workingList):
+    """Prints a list
+
+    """
+    TotalCost = 0
+    for Item in range(0, len(workingList)):
+        TotalCost += float(workingList[Item][1])
+        print("{0:d}. {1:25s} ${2:>8.2f} ({3})".format(Item, workingList[Item][0], float(workingList[Item][1]),
+                                                       workingList[Item][2]))
+
+    print('Total expected price for {0} items: ${1:.2f}\n'.format(len(workingList), TotalCost))
+
+def MarkComplete(mainList, workingList):
+    """Changing parameter in list
+
+    """
+    PrintList(workingList)
+    print('Enter the number of an item to mark as completed')
+
+    while True:
+        try:
+            ItemNumber = int(input('>>> '))
+            if ItemNumber > len(workingList):
+                print('Invalid item number')
+            elif ItemNumber < 0:
+                print('Invalid item number')
+            else:
+                break
+        except ValueError:
+            print('Invalid input; enter a number')
+
+    mainList[ItemNumber][3] = "c"
+    print("{0} marked as completed\n".format(mainList[ItemNumber][0]))
+    return mainList
