@@ -14,57 +14,55 @@ __author__ = "Lyle Martin"
 
 import csv
 from operator import itemgetter
+import Functions
 
 
-def PrintRawFileData():
-    InFile = open("items.csv", "r")
-    print(InFile.read())
-    InFile.close()
-
-
-PrintRawFileData()
-
+InFile = open("items.csv", "r")
+print(InFile.read())
+InFile.close()
 
 def main():
-    StoreFileData()
+    ItemList = StoreFileData()
     print('Shopping List 1.0 - by Lyle Martin')
-    print("{} items loaded from items.csv".format(NumberOfItems))
+    print("{} items loaded from items.csv".format(len(ItemList)))
 
     menu = "Menu:\nR - List required items\nC - List completed items\nA - Add new item\nM - Mark item as completed\nQ - Quit"
     print(menu)
     choice = input(">>> ").upper()
     while choice != 'Q':
         if choice == "R":
-            CheckStatus(Items, NumberOfItems)
-            if required == 0:
-                print('No required items\n')
+            reqList = CreateList(ItemList, 'r')
+            if len(reqList) == 0:
+                print('No required items')
             else:
-                print('Required items: ')
-                PrintRequiredList(Items, NumberOfItems)
+                PrintList(reqList)
+
             print(menu)
             choice = input('>>> ').upper()
 
         elif choice == "C":
-            CheckStatus(Items, NumberOfItems)
-            if completed == 0:
+            comList = CreateList(ItemList, 'c')
+            if len(comList) == 0:
                 print('No completed items')
             else:
-                print('Completed items: ')
-                PrintCompletedList(Items, NumberOfItems)
+                PrintList(comList)
+
             print(menu)
             choice = input('>>> ').upper()
 
         elif choice == "A":
-            AddItem()
+            ItemList = AddItem(ItemList)
+
             print(menu)
             choice = input('>>> ').upper()
 
         elif choice == "M":
-            CheckStatus(Items,NumberOfItems)
-            if required == 0:
+            reqList = CreateList(ItemList, 'r')
+            if len(reqList) == 0:
                 print('No required items\n')
             else:
-                MarkComplete(Items)
+                ItemList = MarkComplete(ItemList, reqList)
+
             print(menu)
             choice = input('>>> ').upper()
 
@@ -72,91 +70,42 @@ def main():
             print("Invalid menu choice\n")
             print(menu)
             choice = input('>>> ').upper()
-    UpdateFile(Items, NumberOfItems)
+    UpdateFile(ItemList)
     print('Have a nice day :)')
 
-
 def StoreFileData():
-    global Items, NumberOfItems
+    """Import file and save to a list.
+
+    No variables need to be called in. The function will return 1 variable (a list containing the
+    content of the file).
+    """
     ItemFile = open("items.csv", "r")
     reader = csv.reader(ItemFile)
     Items = []
     for line in reader:
         Items.append(line)
     Items.sort(key=itemgetter(2))
-    NumberOfItems = len(Items)
     ItemFile.close()
-    return Items, NumberOfItems
+    return Items
 
+def CreateList(mainList, searchValue):
+    """Print a required list on the screen
 
-def PrintRequiredList(Items, NumberOfItems):
-    ItemNumber = 0
-    TotalCost = 0
-    NumberOfPrints = 0
-    while ItemNumber < NumberOfItems:
-        if Items[ItemNumber][3] == "r":
-            TotalCost += float(Items[ItemNumber][1])
-            print(
-                "{0:d}. {1:25s} ${2:>8.2f} ({3})".format(ItemNumber, Items[ItemNumber][0], float(Items[ItemNumber][1]),
-                                                         Items[ItemNumber][2]))
-            NumberOfPrints += 1
-        ItemNumber += 1
+    """
+    inFile = open("items.csv", "r")
+    reader = csv.reader(inFile)
+    reqItems = []
+    for line in range(0,len(mainList)):
+        if searchValue == mainList[line][3]:
+            reqItems.append(mainList[line])
+    reqItems.sort(key=itemgetter(2))
+    inFile.close()
+    return reqItems
 
-    print('Total expected price for {0} items: ${1:.2f}\n'.format(NumberOfPrints, TotalCost))
+def AddItem(workingList):
+    """Adding a list to a list
 
-
-def MarkComplete(Items):
-    PrintRequiredList(Items, NumberOfItems)
-    print('Enter the number of an item to mark as completed')
-
-    while True:
-        try:
-            ItemNumber = int(input('>>> '))
-            if ItemNumber > NumberOfItems:
-                print('Invalid item number')
-            elif ItemNumber < 0:
-                print('Invalid item number')
-            else:
-                break
-        except ValueError:
-            print('Invalid input; enter a number')
-
-    Items[ItemNumber][3] = "c"
-    print("{0} marked as completed\n".format(Items[ItemNumber][0]))
-
-
-def PrintCompletedList(Items, NumberOfItems):
-    ItemNumber = 0
-    TotalCost = 0
-    NumberOfPrints = 0
-    while ItemNumber < NumberOfItems:
-        if Items[ItemNumber][3] == "c":
-            TotalCost += float(Items[ItemNumber][1])
-            print(
-                "{0:d}. {1:25s} ${2:>8.2f} ({3})".format(ItemNumber, Items[ItemNumber][0], float(Items[ItemNumber][1]),
-                                                         Items[ItemNumber][2]))
-            NumberOfPrints += 1
-        ItemNumber += 1
-
-    print('Total expected price for {0} items: ${1:.2f}\n'.format(NumberOfPrints, TotalCost))
-
-
-def CheckStatus(Items, NumberOfItems):
-    global completed, required
-    completed = 0
-    required = 0
-    ItemNumber = 0
-    while ItemNumber < NumberOfItems:
-        if Items[ItemNumber][3] == "c":
-            completed += 1
-        elif Items[ItemNumber][3] == "r":
-            required += 1
-        ItemNumber += 1
-    return completed, required
-
-
-def AddItem():
-    global Items, NumberOfItems
+    """
 
     while True:
         try:
@@ -191,19 +140,51 @@ def AddItem():
             print('Invalid input; enter a valid number')
 
     NewItem = [name, str(price), str(priority), 'r']
-    Items.append(NewItem)
-    Items.sort(key=itemgetter(2))
-    NumberOfItems = len(Items)
+    workingList.append(NewItem)
+    workingList.sort(key=itemgetter(2))
     print('{}, ${:.2f} (priority {}) added to shopping list\n'.format(name, float(price), priority))
-    return Items, NumberOfItems
+    return workingList
 
-
-def UpdateFile(Items, NumberOfItems):
+def UpdateFile(workingList):
     OutFile = open('newitems.csv', 'w')
     writer = csv.writer(OutFile, lineterminator='\n')
-    writer.writerows(Items)
+    writer.writerows(workingList)
     OutFile.close()
-    print('{} items saved to items.csv'.format(NumberOfItems))
+    print('{} items saved to items.csv'.format(len(workingList)))
 
+def PrintList(workingList):
+    """Prints a list
+
+    """
+    TotalCost = 0
+    for Item in range(0,len(workingList)):
+        TotalCost += float(workingList[Item][1])
+        print("{0:d}. {1:25s} ${2:>8.2f} ({3})".format(Item, workingList[Item][0], float(workingList[Item][1]),
+                                                         workingList[Item][2]))
+
+    print('Total expected price for {0} items: ${1:.2f}\n'.format(len(workingList), TotalCost))
+
+def MarkComplete(mainList, workingList):
+    """Changing parameter in list
+
+    """
+    PrintList(workingList)
+    print('Enter the number of an item to mark as completed')
+
+    while True:
+        try:
+            ItemNumber = int(input('>>> '))
+            if ItemNumber > len(workingList):
+                print('Invalid item number')
+            elif ItemNumber < 0:
+                print('Invalid item number')
+            else:
+                break
+        except ValueError:
+            print('Invalid input; enter a number')
+
+    mainList[ItemNumber][3] = "c"
+    print("{0} marked as completed\n".format(mainList[ItemNumber][0]))
+    return mainList
 
 main()
