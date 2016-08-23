@@ -31,49 +31,6 @@ def CreateList(mainList, searchValue):
     inFile.close()
     return reqItems
 
-def AddItem(workingList):
-    """Adding a list to a list
-
-    """
-
-    while True:
-        try:
-            name = str(input('Item name: '))
-            if len(name) == 0:
-                print('Input can not be blank')
-            else:
-                break
-        except Exception:
-            print('Invalid input try again')
-
-    while True:
-        try:
-            price = float(input('Price: $ '))
-            if price < 0:
-                print('Price must be >= $0')
-            else:
-                break
-        except ValueError:
-            print('Invalid input; enter a valid number')
-
-    while True:
-        try:
-            priority = int(input('Priority: '))
-            if priority <= 0:
-                print('Priority must be 1, 2 or 3')
-            elif priority > 3:
-                print('Priority must be 1, 2 or 3')
-            else:
-                break
-        except ValueError:
-            print('Invalid input; enter a valid number')
-
-    NewItem = [name, str(price), str(priority), 'r']
-    workingList.append(NewItem)
-    workingList.sort(key=itemgetter(2))
-    print('{}, ${:.2f} (priority {}) added to shopping list\n'.format(name, float(price), priority))
-    return workingList
-
 def UpdateFile(workingList):
     """
     :param workingList:
@@ -120,3 +77,12 @@ def MarkComplete(mainList, workingList):
     mainList[ItemNumber][3] = "c"
     print("{0} marked as completed\n".format(mainList[ItemNumber][0]))
     return mainList
+
+def PrintMenu():
+    """
+
+    :return:
+    """
+    print("Menu:\nR - List required items\nC - List completed items\nA - Add new item\nM - Mark item as completed\nQ - Quit")
+    choice = input(">>> ").upper()
+    return choice
