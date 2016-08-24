@@ -12,32 +12,30 @@ __author__ = "Lyle Martin"
                      new items or changes to the status.
 """
 
-import csv
+
 from operator import itemgetter
-from Functions import PrintMenu, PrintList
-from Functions import StoreFileData, UpdateFile
-from Functions import CreateList, MarkComplete
+from Functions import PrintList, StoreFileData, UpdateFile, CreateList, MarkComplete
 
 InFile = open("items.csv", "r")
 print(InFile.read())
 InFile.close()
 ITEMLIST = StoreFileData()
+MENU = "Menu:\nR - List required items\nC - List completed items\nA - Add new item\nM - Mark item as completed\nQ - Quit"
+
+print('Shopping List 1.0 - by Lyle Martin')
+print("{} items loaded from items.csv".format(len(ITEMLIST)))
 
 def main():
-
-    print('Shopping List 1.0 - by Lyle Martin')
-    print("{} items loaded from items.csv".format(len(ITEMLIST)))
-
     options = {'R' : caseR, 'C' : caseC, 'A' : AddItem, 'M' : caseM}
-    choice = PrintMenu()
+    print(MENU)
+    choice = input(">>> ").upper()
 
     while choice != 'Q':
-
         try: options[choice]()
         except KeyError:
             print("Invalid menu choice\n")
-
-        choice = PrintMenu()
+        print(MENU)
+        choice = input(">>> ").upper()
 
     UpdateFile(ITEMLIST)
     print('Have a nice day :)')
@@ -47,6 +45,7 @@ def caseR():
     if len(reqList) == 0:
         print('No required items')
     else:
+        print('Required items:')
         PrintList(reqList)
 
 def caseC():
@@ -54,11 +53,14 @@ def caseC():
     if len(comList) == 0:
         print('No completed items')
     else:
+        print('Completed Items:')
         PrintList(comList)
 
 def AddItem():
     """Adding a list to a list
 
+        Asks the user for certain information and saves it to a list (newList). Then that list is
+        saved to the mainList (ITEMLIST).
     """
 
     while True:
