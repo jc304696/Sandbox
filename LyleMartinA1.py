@@ -1,4 +1,3 @@
-__author__ = "Lyle Martin"
 """ Name:            Lyle Martin
     Date:            18/08/2016
     Program Details: The following program will be able to open a file containing a shopping list. The list will be set
@@ -10,7 +9,59 @@ __author__ = "Lyle Martin"
                      4. Mark items as completed
                      Once the user has finished and chooses to exit the program, the list will be updated in the original
                      file.
+
+    Pseudocode
+
+    import Functions
+    function main
+        open file
+        display raw data from file
+        close file
+        call store_file_data
+
+        display welcome message
+        display number of items in file
+        display menu
+        get choice
+
+        while choice is not Q
+            if choice is R
+                call create_list(main_list, status)
+                    create a required list
+                if required list empty
+                    display message
+                else
+                    call print_list(working_list)
+                        display required list and total cost
+
+            else if choice C
+                call create_list(main_list, status)
+                    create a completed list
+                if completed list empty
+                    display message
+                else
+                    call print_list(working_list)
+                        display completed list and total price
+
+            else if choice A
+                call add_item(main_list)
+
+            else if choice M
+                call create_list(main_list, status)
+                if no items in list
+                    display message
+                else
+                    call mark_complete(main_list, working_list)
+
+            display menu
+            get choice
+
+        call update_file(main_list)
+            saves main_list to csv file
+        display farewell message
+
 """
+
 from Functions import print_list, store_file_data, update_file, create_list, mark_complete, add_item
 
 def main():
@@ -27,27 +78,27 @@ def main():
 
     while choice != 'Q':
         if choice == 'R':
-            req_list = create_list(item_list, 'r')
-            if len(req_list) == 0:
+            required_list = create_list(item_list, 'r')
+            if len(required_list) == 0:
                 print('No required items')
             else:
                 print('Required items:')
-                print_list(req_list)
+                print_list(required_list)
         elif choice == 'C':
-            com_list = create_list(item_list, 'c')
-            if len(com_list) == 0:
+            completed_list = create_list(item_list, 'c')
+            if len(completed_list) == 0:
                 print('No completed items')
             else:
                 print('Completed Items:')
-                print_list(com_list)
+                print_list(completed_list)
         elif choice == 'A':
             add_item(item_list)
         elif choice == 'M':
-            req_list = create_list(item_list, 'r')
-            if len(req_list) == 0:
+            required_list = create_list(item_list, 'r')
+            if len(required_list) == 0:
                 print('No required items\n')
             else:
-                mark_complete(item_list, req_list)
+                mark_complete(item_list, required_list)
 
         print(menu)
         choice = input(">>> ").upper()
