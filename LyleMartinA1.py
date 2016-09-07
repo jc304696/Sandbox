@@ -15,6 +15,7 @@
     import Functions
     function main
         call store_file_data
+            returns a item list (aka main list)
 
         display welcome message
         display number of items in file
@@ -23,102 +24,110 @@
 
         while choice is not Q
             if choice is R
-                call create_list(main_list, status)
-                    create a required list
+                call create_list(main list, status)
+                    returns a required list (aka a working list)
                 if required list empty
                     display message
                 else
-                    call print_list(working_list)
+                    call print_list(working list)
                         display required list and total cost
 
-            else if choice C
-                call create_list(main_list, status)
-                    create a completed list
+            else if choice is C
+                call create_list(main list, status)
+                    returns a completed list (aka a working list)
                 if completed list empty
                     display message
                 else
-                    call print_list(working_list)
+                    call print_list(working list)
                         display completed list and total price
 
-            else if choice A
-                call add_item(main_list)
+            else if choice is A
+                call add_item(main list)
 
-            else if choice M
-                call create_list(main_list, status)
+            else if choice is M
+                call create_list(main list, status)
+                    returns a required list (aka a working list)
                 if no items in list
                     display message
                 else
-                    call mark_complete(main_list, working_list)
+                    call mark_complete(main list, working list)
+
+            else
+                display error message
 
             display menu
             get choice
 
-        call update_file(main_list)
-            saves main_list to csv file
+        call update_file(main list)
+            saves item list to csv file
         display farewell message
 
     function store_file_data()
         open file
-        read each line of file
-        items = []
+        state how you want to read the file ??
+        create empty item list
+
         for each line in file
-            add line to items
-        sort items by priority
+            add line to item list
+
+        sort item list by priority
         close file
-        return items
+        return item list
 
-    function create_list(main_list, status)
-        required_items = []
-        for item_number from 0 to length of main_list
-            if status is equal to status in main_list
-                add item to required_items
-        sort required_items by priority
-        return required_items
+    function create_list(main list, status)
+        create empty required items list
 
-    function update_file(main_list)
+        for item_number from 0 to length of main list
+            if status('r' or 'c') is equal to status in main list
+                add item to required items list
+
+        sort required items list by priority
+        return required items list
+
+    function update_file(main list)
         open file
-        write each line to file (as csv)
+        write each list inside of main list to a line in file (as csv)
         close file
-        display number of items
+        display how many items were saved to the file
 
-    function print_list(working_list)
-        total_cost = 0
-        for each item in working_list
-            total_cost = total_cost + (cost of item)
-            display item number, name, cost of item and priority
+    function print_list(working list)
+        create total cost variable
+
+        for each item in working list
+            add cost of item to total cost
+            display item number, name of item, cost of item and priority
+
         display total cost
 
-    function mark_completed(main_list, working_list)
-        call print_list(working_list)
-            display woking_list
-        display instructions
+    function mark_completed(main list, working list)
+        call print_list(working list)
+            display working list
+        display instruction sentences
         while True
             try
-                get item_number
-                if item_number greater than items in working list
+                get item number
+                if item number is greater than length of working list
                     display error message
-                else if item_number less than 0
+                else if item number is less than 0
                     display error message
                 else
                     break
-                except type of error
-                    display message
-            for item in main_list
-                if chosen item name is equal to item name from main_list
-                    change the status to complete 'c' in main_list
-            display what item has been completed
-            return main_list
-
-        function add_item(main_list)
-            while True
-                try
-                    get name
-                    if length of name less than 0
-                        display error message
-                    else
-                        break
                 except error type
                     display error message
+
+            for item in main list
+                if the chosen item name from working list is equal to item name from main list
+                    change the status to complete ('c') in main list
+
+            display name of item that has been completed
+            return main list
+
+        function add_item(main list)
+            get name
+            while length of name equal to 0
+                display error message
+                get name
+
             while True
                 try
                     get price
@@ -128,27 +137,27 @@
                         break
                 except error type
                     display error message
+
             while True
                 try
                     get priority
-                    if priority less than or equal to 0
+                    if priority is less than or equal to 0
                         display error message
-                    else if priority greater than 3
+                    else if priority is greater than 3
                         display error message
                     else
                         break
                 except error type
                     display error message
-            new_list = name, price, priority and 'r'
-            add new_list to main_list
+
+            create new list contain the parameters gathered from the user
+            add new list to main list
             sort main list by priority
             display what was added to list
-
 """
 
 import csv
 from operator import itemgetter
-from Functions import print_list, store_file_data, update_file, create_list, mark_complete, add_item
 
 def main():
     item_list = store_file_data()
@@ -163,14 +172,14 @@ def main():
         if choice == 'R':
             required_list = create_list(item_list, 'r')
             if len(required_list) == 0:
-                print('No required items')
+                print('No required items\n')
             else:
                 print('Required items:')
                 print_list(required_list)
         elif choice == 'C':
             completed_list = create_list(item_list, 'c')
             if len(completed_list) == 0:
-                print('No completed items')
+                print('No completed items\n')
             else:
                 print('Completed Items:')
                 print_list(completed_list)
@@ -182,7 +191,8 @@ def main():
                 print('No required items\n')
             else:
                 mark_complete(item_list, required_list)
-
+        else:
+            print('Invalid menu choice\n')
         print(menu)
         choice = input(">>> ").upper()
 
@@ -267,10 +277,10 @@ def mark_complete(main_list, working_list):
             print('Invalid input; enter a number')
 
     for item in range(0, len(main_list)):
-        if working_list[item_number] == main_list[item][0]:
+        if working_list[item_number][0] == main_list[item][0]:
             main_list[item][3] = 'c'
 
-    print("{0} marked as completed\n".format(working_list[item_number]))
+    print("{0} marked as completed\n".format(working_list[item_number][0]))
     return main_list
 
 def add_item(main_list):
@@ -279,16 +289,10 @@ def add_item(main_list):
         Asks the user for certain information (item name, item price & priority) and saves
         it to a list (newList). Then that list is saved to the mainList (ITEMLIST).
     """
-
-    while True:
-        try:
-            name = str(input('Item name: '))
-            if len(name) == 0:
-                print('Input can not be blank')
-            else:
-                break
-        except Exception:
-            print('Invalid input try again')
+    name = str(input('Item name: '))
+    while len(name) == 0 :
+        print('Input can not be blank')
+        name = str(input('Item name: '))
 
     while True:
         try:
