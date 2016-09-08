@@ -70,7 +70,6 @@
         for each line in file
             add line to item list
 
-        sort item list by priority
         close file
         return item list
 
@@ -202,7 +201,7 @@ def main():
 def store_file_data():
     """Import file and save to a list.
 
-    No variables to be called in. The function opens a .csv file and returns a list containing the
+    No variables to be called in. The function opens a .csv file and returns a list of lists containing the
     content of the file.
     """
     item_file = open("items.csv", "r")
@@ -210,7 +209,6 @@ def store_file_data():
     items = []
     for line in reader:
         items.append(line)
-    items.sort(key=itemgetter(2))       # order the list according to priority
     item_file.close()
     return items
 
