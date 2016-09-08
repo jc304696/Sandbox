@@ -9,8 +9,8 @@
                      4. Mark items as completed
                      Once the user has finished and chooses to exit the program, the list will be updated in the original
                      file.
-
-    Pseudocode
+    GitHub URL:      https://github.com/jc304696/Sandbox
+    Pseudocode:
 
     function main()
         call store_file_data()
