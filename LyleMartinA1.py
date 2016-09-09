@@ -67,12 +67,7 @@
         return item_list
 
     function create_list(item_list, status('r' or 'c'))
-        new_list = empty list
-
-        for item_number from 0 to length of item_list
-            if status is equal to status in item_list
-                add item to new_list
-
+        create new_list by searching for status in item_list
         sort new_list by priority
         return new_list
 
@@ -110,15 +105,15 @@
             display required_list[0] has been marked as completed
 
         function add_item(item_list)
-            get name
-            while length of name equal to 0
+            get item_name
+            while length of item_name equal to 0
                 display error message
-                get name
+                get item_name
 
             while True
                 try
-                    get price
-                    if price is less than 0
+                    get item_price
+                    if item_price is less than 0
                         display error message
                     else
                         break
@@ -127,19 +122,19 @@
 
             while True
                 try
-                    get priority
-                    if priority is less than or equal to 0
+                    get item_priority
+                    if item_priority is less than or equal to 0
                         display error message
-                    else if priority is greater than 3
+                    else if item_priority is greater than 3
                         display error message
                     else
                         break
                 except error type
                     display error message
 
-            new_list = [name, price, priority, 'r']
-            append new list to item_list
-            display contents of new_list
+            new_item = [item_name, item_price, item_priority, 'r']
+            append new_item to item_list
+            display contents of new_item
 """
 
 import csv
@@ -190,6 +185,7 @@ def load_items():
 
     No variables to be called in. The function opens a .csv file and returns a list of lists containing the
     content of the file.
+    :return items
     """
     item_file = open("items.csv", "r")
     reader = csv.reader(item_file)
@@ -204,22 +200,20 @@ def load_items():
 def create_list(item_list, status):
     """Creates a list
 
-        Uses 2 call in variables (mainList & searchValue). mainList refers to the variable that
-        contains the full list. searchValue refers to the parameter that you wish to scan through
-        the mainList to save to a new list. Returns the new list as its output.
+        Uses 2 call in variables (item_list & status). item_list refers to the variable that
+        contains all the items (completed or required). status refers to the parameter that needs to be satisfied
+        before adding the item to the new_list.
+        :return new_list
     """
-    new_item = []
-    for item_number in range(0, len(item_list)):
-        if status == item_list[item_number][3]:
-            new_item.append(item_list[item_number])
-    new_item.sort(key=itemgetter(2))            # sorts list by priority
-    return new_item
+    new_list = [item for item in item_list if item[3] == status]
+    new_list.sort(key=itemgetter(2))            # sorts list by priority
+    return new_list
 
 def save_items(item_list):
-    """Overwrites file content
+    """Saves what is inside item_list to a csv file
 
-        Users 1 call in variable (mainList). mainList refers to the variable that contains the
-        full list that you want saved to the file.
+        Calls in one variable (item_list). item_list refers to the variable that contains the
+        full list of items that you want save to the csv file.
     """
     out_file = open('items.csv', 'w')
     writer = csv.writer(out_file, lineterminator='\n')
@@ -230,10 +224,10 @@ def save_items(item_list):
 def print_list(item_list):
     """Prints a list
 
-        Users 1 call in variable (woorkingList). workingList refers to the list that you want printed.
-        The workingList needs to be set out as followed ['name','price','priority','status']
-        This function is best used in conjunction with CreateList(), after a list has been created with
-        the required criteria you can print it to the screen with this function.
+        Calls in one variable (item_list). item_list refers to the list that you want printed.
+        The item_list lists' NEEDS to be set out as followed ['name','price','priority','status']
+        This function is best used in conjunction with create_list(), after a list has been created with
+        the required criteria.
     """
     total_cost = 0
     for item_number in range(0, len(item_list)):
@@ -243,11 +237,11 @@ def print_list(item_list):
     print('Total expected price for {0} items: ${1:.2f}'.format(len(item_list), total_cost))
 
 def mark_complete(item_list, required_list):
-    """Changing parameter in list
+    """Changing a parameter in the list
 
-        Users 2 call in variables (mainList & workingList). mainList refers to the variable that contains
-        the full list. workingList refers to the variable that contains a list with certain criteria (i.e.
-        this list usually equal to or smaller than the mainList)
+        Calls in two variables (item_list & required_list). item_list refers to the list that contains
+        the full list of items. required_list refers to the list that contains items that still need to
+        be aquired
     """
     print_list(required_list)
     print('Enter the number of an item to mark as completed')
@@ -270,18 +264,19 @@ def mark_complete(item_list, required_list):
 def add_item(item_list):
     """Adding a list to a list
 
-        Asks the user for certain information (item name, item price & priority) and saves
-        it to a list (newList). Then that list is saved to the mainList (ITEMLIST).
+        Calls in one parameter (item_list). item_list is the list that contains every item no matter what its
+        status is. Then asks the user for certain information (item name, item price & item priority) and adds
+        it to new_item. Then new_item is added to item_list.
     """
-    name = str(input('Item name: '))
-    while len(name) == 0 :
+    item_name = str(input('Item name: '))
+    while len(item_name) == 0 :
         print('Input can not be blank')
-        name = str(input('Item name: '))
+        item_name = str(input('Item name: '))
 
     while True:
         try:
-            price = float(input('Price: $ '))
-            if price < 0:
+            item_price = float(input('Price: $ '))
+            if item_price < 0:
                 print('Price must be >= $0')
             else:
                 break
@@ -290,18 +285,18 @@ def add_item(item_list):
 
     while True:
         try:
-            priority = int(input('Priority: '))
-            if priority <= 0:
+            item_priority = int(input('Priority: '))
+            if item_priority <= 0:
                 print('Priority must be 1, 2 or 3')
-            elif priority > 3:
+            elif item_priority > 3:
                 print('Priority must be 1, 2 or 3')
             else:
                 break
         except ValueError:
             print('Invalid input; enter a valid number')
 
-    new_item = [name, price, priority, 'r']
+    new_item = [item_name, item_price, item_priority, 'r']
     item_list.append(new_item)
-    print('{}, ${:.2f} (priority {}) added to shopping list'.format(name, float(price), priority))
+    print('{}, ${:.2f} (priority {}) added to shopping list'.format(item_name, float(item_price), item_priority))
     
 main()
