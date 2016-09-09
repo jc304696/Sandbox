@@ -141,13 +141,13 @@ import csv
 from operator import itemgetter
 
 def main():
-    item_list = load_items()
-    menu = "Menu:\nR - List required items\nC - List completed items\nA - Add new item\nM - Mark item as completed\nQ - Quit"
+    item_list = load_items('items.csv')
+    menu = 'Menu:\nR - List required items\nC - List completed items\nA - Add new item\nM - Mark item as completed\nQ - Quit'
 
     print('Shopping List 1.0 - by Lyle Martin')
-    print("{} items loaded from items.csv".format(len(item_list)))
+    print('{} items loaded from items.csv'.format(len(item_list)))
     print(menu)
-    choice = input(">>> ").upper()
+    choice = input('>>> ').upper()
 
     while choice != 'Q':
         if choice == 'R':
@@ -175,19 +175,19 @@ def main():
         else:
             print('Invalid menu choice')
         print(menu)
-        choice = input(">>> ").upper()
+        choice = input('>>> ').upper()
 
-    save_items(item_list)
+    save_items(item_list, 'items.csv')
     print('Have a nice day :)')
 
-def load_items():
+def load_items(file_name):
     """Import file and save to a list.
 
     No variables to be called in. The function opens a .csv file and returns a list of lists containing the
     content of the file.
     :return items
     """
-    item_file = open("items.csv", "r")
+    item_file = open(file_name, "r")
     reader = csv.reader(item_file)
     items = []
     for item in reader:
@@ -209,17 +209,18 @@ def create_list(item_list, status):
     new_list.sort(key=itemgetter(2))            # sorts list by priority
     return new_list
 
-def save_items(item_list):
+def save_items(item_list, file_name):
     """Saves what is inside item_list to a csv file
 
-        Calls in one variable (item_list). item_list refers to the variable that contains the
-        full list of items that you want save to the csv file.
+        Calls in two parameters (item_list & file_name). item_list refers to the variable that contains the
+        full list of items that you want save to the csv file. file_name is the name of the file you wish to
+        save them too.
     """
-    out_file = open('items.csv', 'w')
+    out_file = open(file_name, 'w')
     writer = csv.writer(out_file, lineterminator='\n')
     writer.writerows(item_list)
     out_file.close()
-    print('{} items saved to items.csv'.format(len(item_list)))
+    print('{} items saved to {}'.format(len(item_list), file_name))
 
 def print_list(item_list):
     """Prints a list
@@ -232,7 +233,7 @@ def print_list(item_list):
     total_cost = 0
     for item_number in range(0, len(item_list)):
         total_cost += item_list[item_number][1]
-        print("{0:d}. {1:25s} ${2:>8.2f} ({3})".format(item_number, item_list[item_number][0], item_list[item_number][1],
+        print('{0:d}. {1:25s} ${2:>8.2f} ({3})'.format(item_number, item_list[item_number][0], item_list[item_number][1],
                                                        item_list[item_number][2]))
     print('Total expected price for {0} items: ${1:.2f}'.format(len(item_list), total_cost))
 
@@ -259,7 +260,7 @@ def mark_complete(item_list, required_list):
         if required_list[item_number][0] == item_list[item][0]:
             item_list[item][3] = 'c'
 
-    print("{0} marked as completed".format(required_list[item_number][0]))
+    print('{0} marked as completed'.format(required_list[item_number][0]))
 
 def add_item(item_list):
     """Adding a list to a list
