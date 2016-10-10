@@ -1,0 +1,49 @@
+BoxLayout:
+    id: mainBox
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            orientation: 'horizontal'
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: 0.3
+                Button:
+                    id: requiredList
+                    text: 'List Required'
+                Button:
+                    id: completedList
+                    text: 'List Completed'
+                Label:
+                    text: 'Add New Item'
+                Label:
+                    text: 'Name'
+                TextInput:
+                    id: name
+                Label:
+                    text: 'Price'
+                TextInput:
+                    id: price
+                Label:
+                    text: 'Priority'
+                TextInput:
+                    id: priority
+                Button:
+                    id: addItem
+                    text: 'Add item'
+                Button:
+                    id: clear
+                    text: 'Clear'
+
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    id: heading
+                    size_hint_y: 0.1
+                BoxLayout:
+                    id: itemsButtons
+                    cols: 1
+                    orientation: 'vertical'
+
+        Label:
+            id: statusLabel
+            size_hint_y: 0.1

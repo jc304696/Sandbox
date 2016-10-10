@@ -96,111 +96,111 @@
 import csv
 from operator import itemgetter
 
-def store_file_data():
+
+def load_items(file_name):
     """Import file and save to a list.
 
-    No variables to be called in. The function opens a .csv file and returns a list containing the
+    No variables to be called in. The function opens a .csv file and returns a list of lists containing the
     content of the file.
+    :return items
     """
-    item_file = open("items.csv", "r")
+    item_file = open(file_name, "r")
     reader = csv.reader(item_file)
     items = []
-    for line in reader:
-        items.append(line)
-    items.sort(key=itemgetter(2))       # order the list according to priority
+    for item in reader:
+        item[1] = float(item[1])
+        item[2] = int(item[2])
+        items.append(item)
     item_file.close()
     return items
 
-def create_list(main_list, status):
+
+def create_list(item_list, status):
     """Creates a list
 
-        Uses 2 call in variables (mainList & searchValue). mainList refers to the variable that
-        contains the full list. searchValue refers to the parameter that you wish to scan through
-        the mainList to save to a new list. Returns the new list as its output.
+        Uses 2 call in variables (item_list & status). item_list refers to the variable that
+        contains all the items (completed or required). status refers to the parameter that needs to be satisfied
+        before adding the item to the new_list.
+        :return new_list
     """
-    required_items = []
-    for item_number in range(0, len(main_list)):
-        if status == main_list[item_number][3]:
-            required_items.append(main_list[item_number])
-    required_items.sort(key=itemgetter(2))            # sorts list by priority
-    return required_items
+    new_list = [item for item in item_list if item[3] == status]
+    new_list.sort(key=itemgetter(2))  # sorts list by priority
+    return new_list
 
-def update_file(main_list):
-    """Overwrites file content
 
-        Users 1 call in variable (mainList). mainList refers to the variable that contains the
-        full list that you want saved to the file.
+def save_items(item_list, file_name):
+    """Saves what is inside item_list to a csv file
+
+        Calls in two parameters (item_list & file_name). item_list refers to the variable that contains the
+        full list of items that you want save to the csv file. file_name is the name of the file you wish to
+        save them too.
     """
-    out_file = open('newitems.csv', 'w')
+    out_file = open(file_name, 'w')
     writer = csv.writer(out_file, lineterminator='\n')
-    writer.writerows(main_list)
+    writer.writerows(item_list)
     out_file.close()
-    print('{} items saved to items.csv'.format(len(main_list)))
+    print('{} items saved to {}'.format(len(item_list), file_name))
 
-def print_list(working_list):
+
+def print_list(item_list):
     """Prints a list
 
-        Users 1 call in variable (woorkingList). workingList refers to the list that you want printed.
-        The workingList needs to be set out as followed ['name','price','priority','status']
-        This function is best used in conjunction with CreateList(), after a list has been created with
-        the required criteria you can print it to the screen with this function.
+        Calls in one variable (item_list). item_list refers to the list that you want printed.
+        The item_list lists' NEEDS to be set out as followed ['name','price','priority','status']
+        This function is best used in conjunction with create_list(), after a list has been created with
+        the required criteria.
     """
     total_cost = 0
-    for Item in range(0, len(working_list)):
-        total_cost += float(working_list[Item][1])
-        print("{0:d}. {1:25s} ${2:>8.2f} ({3})".format(Item, working_list[Item][0], float(working_list[Item][1]),
-                                                       working_list[Item][2]))
-    print('Total expected price for {0} items: ${1:.2f}\n'.format(len(working_list), total_cost))
+    for item_number in range(0, len(item_list)):
+        total_cost += item_list[item_number][1]
+        print(
+            '{0:d}. {1:25s} ${2:>8.2f} ({3})'.format(item_number, item_list[item_number][0], item_list[item_number][1],
+                                                     item_list[item_number][2]))
+    print('Total expected price for {0} items: ${1:.2f}'.format(len(item_list), total_cost))
 
-def mark_complete(main_list, working_list):
-    """Changing parameter in list
 
-        Users 2 call in variables (mainList & workingList). mainList refers to the variable that contains
-        the full list. workingList refers to the variable that contains a list with certain criteria (i.e.
-        this list usually equal to or smaller than the mainList)
+def mark_complete(item_list, required_list):
+    """Changing a parameter in the list
+
+        Calls in two variables (item_list & required_list). item_list refers to the list that contains
+        the full list of items. required_list refers to the list that contains items that still need to
+        be aquired
     """
-    print_list(working_list)
+    print_list(required_list)
     print('Enter the number of an item to mark as completed')
     while True:
         try:
             item_number = int(input('>>> '))
-            if item_number > (len(working_list) - 1):
-                print('Invalid item number')
-            elif item_number < 0:
+            if item_number > (len(required_list) - 1) or item_number < 0:
                 print('Invalid item number')
             else:
                 break
         except ValueError:
             print('Invalid input; enter a number')
 
-    for item in range(0, len(main_list)):
-        if working_list[item_number] == main_list[item][0]:
-            main_list[item][3] = 'c'
+    for item in range(0, len(item_list)):
+        if required_list[item_number][0] == item_list[item][0]:
+            item_list[item][3] = 'c'
 
-    print("{0} marked as completed\n".format(working_list[item_number]))
-    return main_list
+    print('{0} marked as completed'.format(required_list[item_number][0]))
 
-def add_item(main_list):
+
+def add_item(item_list):
     """Adding a list to a list
 
-        Asks the user for certain information (item name, item price & priority) and saves
-        it to a list (newList). Then that list is saved to the mainList (ITEMLIST).
+        Calls in one parameter (item_list). item_list is the list that contains every item no matter what its
+        status is. Then asks the user for certain information (item name, item price & item priority) and adds
+        it to new_item. Then new_item is added to item_list.
     """
+    item_name = str(input('Item name: '))
+    while len(item_name) == 0:
+        print('Input can not be blank')
+        item_name = str(input('Item name: '))
 
     while True:
         try:
-            name = str(input('Item name: '))
-            if len(name) == 0:
-                print('Input can not be blank')
-            else:
-                break
-        except Exception:
-            print('Invalid input try again')
-
-    while True:
-        try:
-            price = float(input('Price: $ '))
-            if price < 0:
+            item_price = float(input('Price: $ '))
+            if item_price < 0:
                 print('Price must be >= $0')
             else:
                 break
@@ -209,17 +209,16 @@ def add_item(main_list):
 
     while True:
         try:
-            priority = int(input('Priority: '))
-            if priority <= 0:
+            item_priority = int(input('Priority: '))
+            if item_priority <= 0:
                 print('Priority must be 1, 2 or 3')
-            elif priority > 3:
+            elif item_priority > 3:
                 print('Priority must be 1, 2 or 3')
             else:
                 break
         except ValueError:
             print('Invalid input; enter a valid number')
 
-    new_item = [name, str(price), str(priority), 'r']
-    main_list.append(new_item)
-    main_list.sort(key=itemgetter(2))           # sorts main list by priority
-    print('{}, ${:.2f} (priority {}) added to shopping list\n'.format(name, float(price), priority))
+    new_item = [item_name, item_price, item_priority, 'r']
+    item_list.append(new_item)
+    print('{}, ${:.2f} (priority {}) added to shopping list'.format(item_name, float(item_price), item_priority))
