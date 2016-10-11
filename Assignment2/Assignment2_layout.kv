@@ -10,29 +10,56 @@ BoxLayout:
                 Button:
                     id: requiredList
                     text: 'List Required'
+                    on_release: app.required_list()
                 Button:
                     id: completedList
                     text: 'List Completed'
+                    on_release: app.completed_list()
                 Label:
                     text: 'Add New Item'
+                    size_hint_y: None
+                    height: '48dp'
                 Label:
                     text: 'Name'
+                    size_hint_y: None
+                    height: '48dp'
                 TextInput:
-                    id: name
+                    id: itemName
+                    value: ''
+                    size_hint_y: None
+                    height: '48dp'
+                    multiline: False
+                    write_tab: False
                 Label:
                     text: 'Price'
+                    size_hint_y: None
+                    height: '48dp'
                 TextInput:
-                    id: price
+                    id: itemPrice
+                    value: ''
+                    size_hint_y: None
+                    height: '48dp'
+                    multiline: False
+                    write_tab: False
                 Label:
                     text: 'Priority'
+                    size_hint_y: None
+                    height: '48dp'
                 TextInput:
-                    id: priority
+                    id: itemPriority
+                    value: ''
+                    size_hint_y: None
+                    height: '48dp'
+                    multiline: False
+                    write_tab: False
                 Button:
                     id: addItem
                     text: 'Add item'
+                    on_release: app.add_item(itemName.text, itemPrice.text, itemPriority.text)
                 Button:
                     id: clear
                     text: 'Clear'
+                    on_release: app.clear_entry_fields()
 
             BoxLayout:
                 orientation: 'vertical'
@@ -45,5 +72,5 @@ BoxLayout:
                     orientation: 'vertical'
 
         Label:
-            id: statusLabel
+            id: display
             size_hint_y: 0.1
