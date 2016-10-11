@@ -64,13 +64,15 @@ BoxLayout:
             BoxLayout:
                 orientation: 'vertical'
                 Label:
-                    id: heading
+                    id: headingLabel
                     size_hint_y: 0.1
+                    text: app.heading
                 BoxLayout:
                     id: itemsButtons
                     cols: 1
                     orientation: 'vertical'
 
         Label:
-            id: display
+            id: displayLabel
             size_hint_y: 0.1
+            text: app.display

@@ -12,6 +12,12 @@ from kivy.properties import StringProperty
 from Assignment1.Functions import load_items, create_list, save_items
 
 class ShoppingListApp(App):
+    """
+    Main program - Shopping list 2.0
+    """
+    heading = StringProperty()
+    display = StringProperty()
+
     def __init__(self, **kwargs):
         super(ShoppingListApp, self).__init__(**kwargs)
         self.item_list = load_items('items.csv')
@@ -31,12 +37,13 @@ class ShoppingListApp(App):
         required_items = create_list(self.item_list, status)
         for item in range(0, len(required_items)):
             temp_button = Button(text=required_items[item][0])
+            temp_button.bind(on_release=self.press_item)
             self.root.ids.itemsButtons.add_widget(temp_button)
 
     def required_list(self):
         """
 
-        :return:
+        :return: None
         """
         self.root.ids.itemsButtons.clear_widgets()
         total_price_of_list = 0
@@ -44,13 +51,13 @@ class ShoppingListApp(App):
         for item in self.item_list:
             if item[3] == 'r':
                 total_price_of_list += item[1]
-        self.root.ids.heading.text = 'Total price $' + str(total_price_of_list)
-        self.root.ids.display.text = 'Click items to mark them as completed'
+        self.heading = 'Total price ${}'.format(total_price_of_list)
+        self.display = 'Click items to mark them as completed'
 
     def completed_list(self):
         """
 
-        :return:
+        :return: None
         """
         self.root.ids.itemsButtons.clear_widgets()
         total_cost_of_list = 0
@@ -58,18 +65,23 @@ class ShoppingListApp(App):
         for item in self.item_list:
             if item[3] == 'c':
                 total_cost_of_list += item[1]
-        self.root.ids.heading.text = 'Total price $' + str(total_cost_of_list)
-        self.root.ids.display.text = 'Completed items'
+        self.heading = 'Total cost ${}'.format(total_cost_of_list)
+        self.display = 'Completed items'
 
     def press_item(self, instance):
         """
 
         :param instance:
-        :return:
+        :return: None
         """
         name = instance.text
-        for item in self.item_list:
-            if item[0] == name:
+        item = []
+        for item_number in range(0, len(self.item_list)):
+            if self.item_list[item_number][0] == name:
+                self.item_list[item_number][3] = 'c'
+                self.display = "{} has been marked as completed".format(name)
+        self.root.ids.itemsButtons.clear_widgets()
+        self.create_item_buttons('r')
 
 
     def add_item(self,item_name, item_price, item_priority):
