@@ -7,14 +7,16 @@ BoxLayout:
             BoxLayout:
                 orientation: 'vertical'
                 size_hint_x: 0.3
-                Button:
+                ToggleButton:
                     id: requiredList
                     text: 'List Required'
                     on_release: app.required_list()
-                Button:
+                    state: 'down'
+                ToggleButton:
                     id: completedList
                     text: 'List Completed'
                     on_release: app.completed_list()
+                    state: 'normal'
                 Label:
                     text: 'Add New Item'
                     size_hint_y: None
@@ -52,14 +54,16 @@ BoxLayout:
                     height: '48dp'
                     multiline: False
                     write_tab: False
-                Button:
-                    id: addItem
-                    text: 'Add item'
-                    on_release: app.add_item(itemName.text, itemPrice.text, itemPriority.text)
-                Button:
-                    id: clear
-                    text: 'Clear'
-                    on_release: app.clear_entry_fields()
+                BoxLayout:
+                    orientation: 'vertical'
+                    Button:
+                        id: addItem
+                        text: 'Add item'
+                        on_release: app.add_item(itemName.text, itemPrice.text, itemPriority.text)
+                    Button:
+                        id: clear
+                        text: 'Clear'
+                        on_release: app.clear_entry_fields()
 
             BoxLayout:
                 orientation: 'vertical'
