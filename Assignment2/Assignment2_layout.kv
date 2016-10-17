@@ -10,12 +10,12 @@ BoxLayout:
                 ToggleButton:
                     id: requiredList
                     text: 'List Required'
-                    on_release: app.required_list()
+                    on_release: app.required_button()
                     state: 'down'
                 ToggleButton:
                     id: completedList
                     text: 'List Completed'
-                    on_release: app.completed_list()
+                    on_release: app.completed_button()
                     state: 'normal'
                 Label:
                     text: 'Add New Item'

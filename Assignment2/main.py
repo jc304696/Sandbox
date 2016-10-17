@@ -5,7 +5,9 @@ from kivy.lang import Builder
 from kivy.uix.button import Button
 from kivy.properties import StringProperty
 from Assignment1.Functions import load_items, save_items
-from Assignment2.itemlist import ItemList, Item
+from Assignment2.itemlist import ItemList
+
+BUTTON_COLOUR_DICT = {1: (1, 0, 0, 1), 2: (0, 1, 0, 1), 3: (0, 0, 1, 1)}
 
 class ShoppingListApp(App):
     heading = StringProperty()
@@ -13,7 +15,9 @@ class ShoppingListApp(App):
 
     def __init__(self, **kwargs):
         """
-        Construst main App
+        Constructs the ShoppingList App
+
+        :return None
         """
         super(ShoppingListApp, self).__init__(**kwargs)
         item_list = load_items('items.csv')
@@ -22,7 +26,8 @@ class ShoppingListApp(App):
 
     def build(self):
         """
-        Build the Kivy GUI
+        Builds the Kivy GUI
+
         :return: reference to the root Kivy widget
         """
         self.title = 'Shopping List App'
@@ -30,79 +35,64 @@ class ShoppingListApp(App):
         self.required_button()
         return self.root
 
-    def create_item_buttons(self, status):
-        """
-        Creates Buttons for the items in the shopping list and adds them to the GUI. When status is equal to required
-        then the buttons will be coloured red, green or blue depending on the priority (1, 2 or 3) and display the items
-        name. When status is equal to completed the buttons will be grey and display the items name.
-        :param status: The criteria on how to construct button
-        :return: None
-        """
-        if status == 'r':
-            for item in self.items.items:
-                if item.status == status:
-                    if item.priority == 1:
-                        temp_button = Button(text=item.name, background_color=(1, 0, 0, 1))
-                        temp_button.bind(on_release=self.press_item)
-                        self.root.ids.itemsButtons.add_widget(temp_button)
-                    elif item.priority == 2:
-                        temp_button = Button(text=item.name, background_color=(0, 1, 0, 1))
-                        temp_button.bind(on_release=self.press_item)
-                        self.root.ids.itemsButtons.add_widget(temp_button)
-                    elif item.priority == 3:
-                        temp_button = Button(text=item.name, background_color=(0, 0, 1, 1))
-                        temp_button.bind(on_release=self.press_item)
-                        self.root.ids.itemsButtons.add_widget(temp_button)
-
-        elif status == 'c':
-            for item in self.items.items:
-                if item.status == status:
-                    temp_button = Button(text=item.name)
-                    temp_button.bind(on_release=self.press_item)
-                    self.root.ids.itemsButtons.add_widget(temp_button)
-
     def required_button(self):
         """
-        Clears the item field and creates item buttons depending on its status being equal to 'r'
+        Creates required item buttons
+
+        Clears the widgets from the GUI and creates item buttons if the item's status is equal to 'r'
         :return: None
         """
         self.root.ids.completedList.state = 'normal'
         self.root.ids.itemsButtons.clear_widgets()
-        self.create_item_buttons('r')
-        total_cost = self.items.get_total_cost()
+        for item in self.items.items:
+            if item.status == 'r':
+                colour = BUTTON_COLOUR_DICT[item.priority]
+                temp_button = Button(text=item.name, background_color=(colour))
+                temp_button.bind(on_release=self.press_item_button)
+                self.root.ids.itemsButtons.add_widget(temp_button)
+        total_price = self.items.get_total_price()
         self.display = 'Click items to mark them as completed'
-        self.heading = 'Total price: ${:.2f}'.format(total_cost)
+        self.heading = 'Total price: ${:.2f}'.format(total_price)
 
     def completed_button(self):
         """
-        Clears the item field and creates item buttons depending on its status being equal to 'c'
+        Creates completed item button
+
+        Clears the widgets from the GUI and creates item buttons if the item's status is equal to 'c'
         :return: None
         """
         self.root.ids.requiredList.state = 'normal'
         self.root.ids.itemsButtons.clear_widgets()
-        self.create_item_buttons('c')
+        for item in self.items.items:
+            if item.status == 'c':
+                temp_button = Button(text=item.name)
+                temp_button.bind(on_release=self.press_item_button)
+                self.root.ids.itemsButtons.add_widget(temp_button)
         self.heading = 'Showing completed items'
         self.display = 'Click item to view'
 
-    def press_item(self, instance):
+    def press_item_button(self, instance):
         """
+        Handler for pressing item buttons
 
-        :param instance:
+        :param instance: the information from the Kivy button instance
         :return: None
         """
         name = instance.text
-        for item in self.items.items:
-            if item.name == name and item.status == 'r':
-                item.status = 'c'
-                self.display = "Completed: {}".format(Item.__str__(item))
-                self.required_button()
-
-            if item.name == name and item.status == 'c':
-                self.display = "{}".format(Item.__str__(item))
+        item = self.items.get_item_by_name(name)
+        if item.status == 'r':
+            item.mark_complete()
+            self.display = str(item)
+            self.required_button()
+        elif item.status == 'c':
+            self.display = str(item)
 
     def add_item(self,item_name, item_price, item_priority):
         """
+        Adds item to the list
 
+        Error checks entry making sure that all fields have been filled out correctly then creates a list of the results
+        to be converted to an object and added to the list.
         :param item_name: name input as str (from GUI)
         :param item_price: price input as str (from GUI)
         :param item_priority: priority input as str (from GUI)
@@ -136,7 +126,8 @@ class ShoppingListApp(App):
 
     def clear_entry_fields(self):
         """
-        Clears all fields in the text box
+        Clears all fields in the text boxes
+
         :return: None
         """
         self.root.ids.itemName.text = ''
@@ -144,6 +135,11 @@ class ShoppingListApp(App):
         self.root.ids.itemPriority.text = ''
 
     def on_stop(self):
+        """
+        Saves item list to csv file after closing the program down
+
+        :return: None
+        """
         item_list = self.items.get_items_as_a_list()
         save_items(item_list, 'new_items')
 
