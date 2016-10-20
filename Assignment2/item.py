@@ -10,6 +10,12 @@ __author__ = 'Lyle Martin'
 
 
 class Item:
+    """
+    Creates an object to hold an items criteria
+    """
+    COMPLETED = 'c'
+    REQUIRED = 'r'
+
     def __init__(self, name, price, priority, status):
         """
         Constructs the Item class
@@ -40,4 +46,4 @@ class Item:
 
         :return: None
         """
-        self.status = 'c'
+        self.status = Item.COMPLETED

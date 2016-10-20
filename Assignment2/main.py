@@ -18,16 +18,20 @@ from kivy.lang import Builder
 from kivy.uix.button import Button
 from kivy.properties import StringProperty
 from Assignment1.Functions import load_items, save_items
-from Assignment2.itemlist import ItemList
+from Assignment2.itemlist import ItemList, Item
 
 __author__ = 'Lyle Martin'
 
 BUTTON_COLOUR_DICT = {1: (1, 0, 0, 1), 2: (0, 1, 0, 1), 3: (0, 0, 1, 1)}
+FILE_NAME = 'items.csv'
 
 
 class ShoppingListApp(App):
-    heading = StringProperty()
-    display = StringProperty()
+    """
+    Creates a graphical user interface (GUI) that displays a shopping list and methods to handle different events
+    """
+    heading_string = StringProperty()
+    display_string = StringProperty()
 
     def __init__(self, **kwargs):
         """
@@ -36,7 +40,7 @@ class ShoppingListApp(App):
         :return None
         """
         super(ShoppingListApp, self).__init__(**kwargs)
-        item_list = load_items('items.csv')
+        item_list = load_items(FILE_NAME)
         self.items = ItemList()
         self.items.add_items_from_a_list(item_list)
 
@@ -61,14 +65,14 @@ class ShoppingListApp(App):
         self.root.ids.completedList.state = 'normal'
         self.root.ids.itemsButtons.clear_widgets()
         for item in self.items.items:
-            if item.status == 'r':
+            if item.status == Item.REQUIRED:
                 colour = BUTTON_COLOUR_DICT[item.priority]
                 temp_button = Button(text=item.name, background_color=(colour))
                 temp_button.bind(on_release=self.press_item_button)
                 self.root.ids.itemsButtons.add_widget(temp_button)
         total_price = self.items.get_total_price()
-        self.display = 'Click items to mark them as completed'
-        self.heading = 'Total price: ${:.2f}'.format(total_price)
+        self.display_string = 'Click items to mark them as completed'
+        self.heading_string = 'Total price: ${:.2f}'.format(total_price)
 
     def completed_button(self):
         """
@@ -80,12 +84,12 @@ class ShoppingListApp(App):
         self.root.ids.requiredList.state = 'normal'
         self.root.ids.itemsButtons.clear_widgets()
         for item in self.items.items:
-            if item.status == 'c':
+            if item.status == Item.COMPLETED:
                 temp_button = Button(text=item.name)
                 temp_button.bind(on_release=self.press_item_button)
                 self.root.ids.itemsButtons.add_widget(temp_button)
-        self.heading = 'Showing completed items'
-        self.display = 'Click item to view'
+        self.heading_string = 'Showing completed items'
+        self.display_string = 'Click item to view'
 
     def press_item_button(self, instance):
         """
@@ -96,12 +100,12 @@ class ShoppingListApp(App):
         """
         name = instance.text
         item = self.items.get_item_by_name(name)
-        if item.status == 'r':
+        if item.status == Item.REQUIRED:
             item.mark_complete()
-            self.display = str(item)
+            self.display_string = str(item)
             self.required_button()
-        elif item.status == 'c':
-            self.display = str(item)
+        elif item.status == Item.COMPLETED:
+            self.display_string = str(item)
 
     def add_item(self,item_name, item_price, item_priority):
         """
@@ -115,27 +119,27 @@ class ShoppingListApp(App):
         :return: None
         """
         if len(item_name) == 0 or len(item_price) == 0 or len(item_priority) == 0:
-            self.display = 'All fields must be completed'
+            self.display_string = 'All fields must be completed'
         else:
             try:
                 price = float(item_price)
                 if price < 0:
-                    self.display = 'Price must not be negative'
+                    self.display_string = 'Price must not be negative'
                     return
             except ValueError:
-                self.display = 'Please enter a valid entry'
+                self.display_string = 'Please enter a valid entry'
                 return
 
             try:
                 priority = int(item_priority)
                 if priority > 3 or priority < 1:
-                    self.display = 'Priority must be 1, 2 or 3'
+                    self.display_string = 'Priority must be 1, 2 or 3'
                     return
             except ValueError:
-                self.display = 'Please enter a valid number'
+                self.display_string = 'Please enter a valid number'
                 return
 
-            new_item = [str(item_name), price, priority, 'r']
+            new_item = [str(item_name), price, priority, Item.REQUIRED]
             self.items.add_item(new_item)
             self.clear_entry_fields()
             self.required_button()
@@ -157,6 +161,6 @@ class ShoppingListApp(App):
         :return: None
         """
         item_list = self.items.get_items_as_a_list()
-        save_items(item_list, 'new_items')
+        save_items(item_list, FILE_NAME)
 
 ShoppingListApp().run()

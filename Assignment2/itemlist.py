@@ -18,6 +18,9 @@ __author__ = 'Lyle Martin'
 
 
 class ItemList:
+    """
+    Creates different methods to use on item lists
+    """
     def __init__(self):
         """
         Constructs the ItemList class
@@ -94,6 +97,3 @@ class ItemList:
         for item in self.items:
             if item.name == name:
                 return item
-
-
-
