@@ -1,7 +1,20 @@
-__author__ = 'Lyle Martin'
+"""Name:        Lyle Martin
+   Date:        20/10/2016
+   Description: ItemList class creates different methods to sort through the item list. The class contains methods to:
+                - change a list of list into a list of objects
+                - change a list of objects to a list of lists and returns the new list
+                - add an item (object) to a object list
+                - calculates and returns the total price of required items
+                - sort a list of objects by priority
+                - find and return an item (object) with a particular name
+                
+   URL:         https://github.com/jc304696/Sandbox.git
+"""
 
 from Assignment2.item import Item
 from operator import attrgetter
+
+__author__ = 'Lyle Martin'
 
 
 class ItemList:
@@ -9,6 +22,7 @@ class ItemList:
         """
         Constructs the ItemList class
 
+        Creates an empty list. The list will be used to hold the objects created by other methods
         :return None
         """
         self.items = []
@@ -31,7 +45,7 @@ class ItemList:
         Adds a list to a list
 
         Converts an object to a list and adds it to a list
-        :return: item_list
+        :return: item_list: A list of lists
         """
         item_list = []
         for item in self.items:
@@ -41,9 +55,10 @@ class ItemList:
 
     def add_item(self, new_item_criteria):
         """
-        Adds new item object to list
+        Adds a new object to a list
 
-        Takes in a list of criteria and converts it to an object and add it to a list
+        Takes in a list of criteria (name, price, priority & status) and converts it to an object. Once the list has
+        been converted into an object the object is appended to the list created in the init method.
         :param new_item_criteria: a list containing the items name, price, priority and status
         :return: None
         """
@@ -54,10 +69,11 @@ class ItemList:
         """
         Calculates total price of required list
 
+        If the status of an item is set to required ('r') this method will add its price to calculate the total of all
+        the required items.
         :return: total_price
         """
-        total_price = sum(item.price for item in self.items if item.status == 'r')
-        return total_price
+        return sum(item.price for item in self.items if item.status == 'r')
 
     def sort(self):
         """
@@ -71,7 +87,7 @@ class ItemList:
         """
         Gets an item from the object list
 
-        Searches through the object list until the items name matches with the name passed in
+        Searches through the object list until the items name matches the name passed into the method.
         :param name: items name (search criteria)
         :return: item
         """

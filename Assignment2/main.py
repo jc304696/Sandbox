@@ -1,4 +1,17 @@
-__author__ = 'Lyle Martin'
+"""Name:        Lyle Martin
+   Date:        20/10/2016
+   Description: ShoppingListApp class creates a GUI using kivy. The GUI will have the following functionality:
+                - Required list button
+                - Completed list button
+                - Add item button
+                - Clear button
+                - Entry capabilities to add a new item (entries will be name, price and priority)
+                - Display window to show commands to the user
+                - Heading window to show particular statements
+                - Widgets to display the list of items
+
+   URL:         https://github.com/jc304696/Sandbox.git
+"""
 
 from kivy.app import App
 from kivy.lang import Builder
@@ -7,7 +20,10 @@ from kivy.properties import StringProperty
 from Assignment1.Functions import load_items, save_items
 from Assignment2.itemlist import ItemList
 
+__author__ = 'Lyle Martin'
+
 BUTTON_COLOUR_DICT = {1: (1, 0, 0, 1), 2: (0, 1, 0, 1), 3: (0, 0, 1, 1)}
+
 
 class ShoppingListApp(App):
     heading = StringProperty()
