@@ -21,6 +21,7 @@ class ItemList:
     """
     Creates different methods to use on item lists
     """
+
     def __init__(self):
         """
         Constructs the ItemList class

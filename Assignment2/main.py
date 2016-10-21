@@ -51,7 +51,7 @@ class ShoppingListApp(App):
         :return: reference to the root Kivy widget
         """
         self.title = 'Shopping List App'
-        self.root = Builder.load_file('Assignment2_layout.kv')
+        self.root = Builder.load_file('App.kv')
         self.required_button()
         return self.root
 
@@ -107,7 +107,7 @@ class ShoppingListApp(App):
         elif item.status == Item.COMPLETED:
             self.display_string = str(item)
 
-    def add_item(self,item_name, item_price, item_priority):
+    def add_item(self, item_name, item_price, item_priority):
         """
         Adds item to the list
 
@@ -162,5 +162,6 @@ class ShoppingListApp(App):
         """
         item_list = self.items.get_items_as_a_list()
         save_items(item_list, FILE_NAME)
+
 
 ShoppingListApp().run()
