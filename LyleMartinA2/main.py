@@ -18,7 +18,7 @@ from kivy.lang import Builder
 from kivy.uix.button import Button
 from kivy.properties import StringProperty
 from Assignment1.Functions import load_items, save_items
-from Assignment2.itemlist import ItemList, Item
+from LyleMartinA2.itemlist import ItemList, Item
 
 __author__ = 'Lyle Martin'
 

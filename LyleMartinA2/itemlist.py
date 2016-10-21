@@ -11,7 +11,7 @@
    URL:         https://github.com/jc304696/Sandbox.git
 """
 
-from Assignment2.item import Item
+from LyleMartinA2.item import Item
 from operator import attrgetter
 
 __author__ = 'Lyle Martin'
